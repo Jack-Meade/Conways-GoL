@@ -1,5 +1,4 @@
 (function() {
-
   class Cell {
     constructor(status, col, row) {
       this.alive = status;
@@ -61,12 +60,12 @@
       for (let r = 0; r < rows; r++) {
         for (let c = 0; c < columns; c++) {
           if (grid[r][c].x === seededCells[s].x && grid[r][c].y === seededCells[s].y) {
-            grid[r][c].changeCell(true);
-            grid[r][c+getRandomNumber(-1, 1)].changeCell(true);
-            grid[r][c+getRandomNumber(-1, 1)].changeCell(true);
-            grid[r+getRandomNumber(-1, 1)][c].changeCell(true);
-            grid[r+getRandomNumber(-1, 1)][c-1].changeCell(true);
-            grid[r+getRandomNumber(-1, 1)][c-1].changeCell(true);
+            grid[r][c].alive = true;
+            grid[r][c+getRandomNumber(-1, 1)].alive = true;
+            grid[r][c+getRandomNumber(-1, 1)].alive = true;
+            grid[r+getRandomNumber(-1, 1)][c].alive = true;
+            grid[r+getRandomNumber(-1, 1)][c-1].alive = true;
+            grid[r+getRandomNumber(-1, 1)][c-1].alive = true;
           }
         }
       }
@@ -89,13 +88,13 @@
       for (let c = 0; c < columns; c++) {
         switch (countCells(r, c)) {
           case 2:
-            if (grid[r][c].alive) updatedGrid[r][c].changeCell(true);
+            if (grid[r][c].alive) updatedGrid[r][c].alive = true;
             break;
           case 3:
-            updatedGrid[r][c].changeCell(true);
+            updatedGrid[r][c].alive = true;
             break;
           default:
-            updatedGrid[r][c].changeCell(false);
+            updatedGrid[r][c].alive = false;
         }
       }
     }
@@ -111,9 +110,7 @@
     
     for (let checkRow = minRow; checkRow >= minRow && checkRow <= maxRow; checkRow++) {
       for (let checkCol = minCol; checkCol >= minCol && checkCol <= maxCol; checkCol++) {
-        if (grid[checkRow][checkCol].alive && grid[r][c] != grid[checkRow][checkCol]) {
-          count++;
-        }
+        if (grid[checkRow][checkCol].alive && grid[r][c] != grid[checkRow][checkCol]) count++;
       }
     }
     return count;
