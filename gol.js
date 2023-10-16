@@ -51,8 +51,8 @@
     let seededCells = [];
     for (let i = 0; i < 100; i ++) {
       seededCells.push({
-        x : (getRandomNumber(1, 49) * 10),
-        y : (getRandomNumber(1, 49) * 10)
+        x: getRandomNumber(1, 49) * CELL_SIZE * 2,
+        y: getRandomNumber(1, 49) * CELL_SIZE * 2
       });
     }
     
@@ -86,25 +86,20 @@
     let updatedGrid = createGrid();
     for (let r = 0; r < rows; r++) {
       for (let c = 0; c < columns; c++) {
-        switch (countCells(r, c)) {
-          case 2:
-            if (grid[r][c].alive) updatedGrid[r][c].alive = true;
-            break;
-          case 3:
-            updatedGrid[r][c].alive = true;
-            break;
-          default:
-            updatedGrid[r][c].alive = false;
+        switch (getCurrentNeighbourCount(r, c)) {
+          case 2:  updatedGrid[r][c].alive = grid[r][c].alive; break; 
+          case 3:  updatedGrid[r][c].alive = true; break; 
+          default: updatedGrid[r][c].alive = false;
         }
       }
     }
     grid = updatedGrid;
   }
 
-  function countCells(r, c) {
+  function getCurrentNeighbourCount(r, c) {
     let count  = 0;
-    let minRow = (r != 0) ? r - 1 : 0;
-    let minCol = (c != 0) ? c - 1 : 0;
+    let minRow = (r === 0)           ? 0 : r - 1;
+    let minCol = (c === 0)           ? 0 : c - 1;
     let maxRow = (r === rows - 1)    ? r : r + 1;
     let maxCol = (c === columns - 1) ? c : c + 1;
     
