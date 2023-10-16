@@ -49,10 +49,10 @@
 
   function seed() {
     let seededCells = [];
-    for (let i = 0; i < 100; i ++) {
+    for (let i = 0; i < rows; i++) {
       seededCells.push({
-        x: getRandomNumber(1, 49) * CELL_SIZE * 2,
-        y: getRandomNumber(1, 49) * CELL_SIZE * 2
+        x: getRandomNumber(1, (rows - CELL_SIZE)) * CELL_SIZE,
+        y: getRandomNumber(1, (columns - CELL_SIZE)) * CELL_SIZE
       });
     }
     
