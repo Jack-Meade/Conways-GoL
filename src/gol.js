@@ -7,7 +7,7 @@
   document.addEventListener('DOMContentLoaded', init, false);
 
   function init() {
-    canvas  = document.querySelector('canvas');
+    canvas  = $('canvas')[0];
     context = canvas.getContext('2d');
     width   = canvas.width;
     height  = canvas.height;
