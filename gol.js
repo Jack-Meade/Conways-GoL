@@ -1,15 +1,4 @@
 (function() {
-  class Cell {
-    constructor(status, col, row) {
-      this.alive = status;
-      this.x = col;
-      this.y = row;
-
-      this.changeCell = function(status) {
-        this.alive = status;
-      }
-    }
-  }
 
   const CELL_SIZE = 5;
   let canvas, context, width, height;
@@ -40,7 +29,7 @@
     for (let row = 0; row < height; row += CELL_SIZE) {
       let cs = [];
       for (let col = 0; col < width; col += CELL_SIZE) {
-        cs.push(new Cell(false, col, row));
+        cs.push({ alive:false, x:col, y:row });
       }
       rs.push(cs);
     }
