@@ -15,12 +15,7 @@
     rows    = grid.length;
     columns = grid[0].length;
     seed();
-    window.setInterval(tick, 33);
-  }
-
-  function tick() {
-    context.clearRect(0, 0, width, height);
-    draw();
+    window.setInterval(draw, 33);
   }
 
   function createGrid() {
@@ -57,6 +52,7 @@
   }
 
   function draw() {
+    context.clearRect(0, 0, width, height);
     let updatedGrid = createGrid();
     for (let r = 0; r < rows; r ++) {
       for (let c = 0; c < columns; c ++) {
