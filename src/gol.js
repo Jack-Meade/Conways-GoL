@@ -1,23 +1,25 @@
 (function() {
 
   const CELL_SIZE = 5;
-  let canvas, context, width, height, drawInterval, buttons;
+  const SPEED_VALUES = [5, 50, 100, 200, 500, 1000, 2000, 5000];
+  let canvas, context, width, height;
   let grid, numRows, numColumns;
+  let controls, drawInterval;
 
   document.addEventListener('DOMContentLoaded', init, false);
 
   function init() {
-    canvas     = $('canvas')[0];
-    context    = canvas.getContext('2d');
-    width      = canvas.width;
-    height     = canvas.height;
-    grid       = createGrid();
-    numRows    = grid.length;
-    numColumns = grid[0].length;
-    buttons    = { pause: $('#pause'), play: $('#play'), step: $('#step') };
+    canvas       = $('canvas')[0];
+    context      = canvas.getContext('2d');
+    width        = canvas.width;
+    height       = canvas.height;
+    grid         = createGrid();
+    numRows      = grid.length;
+    numColumns   = grid[0].length;
+    controls     = { pause: $('#pause'), play: $('#play'), step: $('#step'), speed: $('#speed-input') };
+    drawInterval = window.setInterval(draw, getCurrentSpeed());
     seed();
-    addEventHandlers();
-    drawInterval = window.setInterval(draw, 33);
+    setupControls();
   }
 
   function createGrid() {
@@ -72,20 +74,35 @@
     return count;
   }
 
-  function addEventHandlers() {
-    buttons.pause.on('click', () => { 
+  function setupControls() {
+    let speedValue = $('#speed-output');
+    speedValue.text(`(Updated every ${getCurrentSpeed()}ms)`);
+    Object.values(controls).forEach(elm => {
+      let disabled = (elm !== controls.pause);
+      elm.attr('disabled', disabled);
+    });
+
+    controls.step.on('click', draw);
+    controls.pause.on('click', () => { 
       window.clearInterval(drawInterval);
       toggleButtons();
     });
-    buttons.play.on('click', () => { 
-      drawInterval = window.setInterval(draw, 33);
+    controls.play.on('click', () => { 
+      drawInterval = window.setInterval(draw, getCurrentSpeed());
       toggleButtons();
     });
-    buttons.step.on('click', draw);
+    controls.speed.on('input', (event) => {
+      controls.speed.attr('value', event.target.value);
+      speedValue.text(`(Updated every ${getCurrentSpeed()}ms)`);
+    });
+  }
+
+  function getCurrentSpeed() {
+    return SPEED_VALUES[controls.speed.attr('value')];
   }
 
   function toggleButtons() {
-    Object.values(buttons).forEach(elm => elm.attr('disabled', !elm.attr('disabled')));
+    Object.values(controls).forEach(elm => elm.attr('disabled', !elm.attr('disabled')));
   }
   
   function getRandomNumber(min, max) {

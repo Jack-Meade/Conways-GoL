@@ -9,3 +9,8 @@ canvas {
 section {
   margin-bottom: .5em;
 }
+
+#speed-section label {
+  align-items: center;
+  display: flex;
+}
