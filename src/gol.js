@@ -21,7 +21,6 @@
   function tick() {
     context.clearRect(0, 0, width, height);
     draw();
-    update();
   }
 
   function createGrid() {
@@ -62,19 +61,12 @@
   }
 
   function draw() {
+    let updatedGrid = createGrid();
     for (let r = 0; r < rows; r ++) {
       for (let c = 0; c < columns; c ++) {
         if (grid[r][c].alive) {
           context.fillRect(grid[r][c].x, grid[r][c].y, CELL_SIZE, CELL_SIZE);
         }
-      }
-    }
-  }
-
-  function update() {
-    let updatedGrid = createGrid();
-    for (let r = 0; r < rows; r++) {
-      for (let c = 0; c < columns; c++) {
         switch (getCurrentNeighbourCount(r, c)) {
           case 2:  updatedGrid[r][c].alive = grid[r][c].alive; break; 
           case 3:  updatedGrid[r][c].alive = true; break; 
