@@ -26,27 +26,14 @@
     });
   }
 
-  function seed() {
-    let seededCells = [];
-    for (let i = 0; i < numRows; i++) {
-      seededCells.push({
-        x: getRandomNumber(1, (numRows - CELL_SIZE)) * CELL_SIZE,
-        y: getRandomNumber(1, (numColumns - CELL_SIZE)) * CELL_SIZE
-      });
-    }
-    
-    for (let s = 0; s < seededCells.length; s++) {
-      for (let r = 0; r < numRows; r++) {
-        for (let c = 0; c < numColumns; c++) {
-          if (grid[r][c].x === seededCells[s].x && grid[r][c].y === seededCells[s].y) {
-            grid[r][c].alive = true;
-            grid[r][c+getRandomNumber(-1, 1)].alive = true;
-            grid[r][c+getRandomNumber(-1, 1)].alive = true;
-            grid[r+getRandomNumber(-1, 1)][c].alive = true;
-            grid[r+getRandomNumber(-1, 1)][c-1].alive = true;
-            grid[r+getRandomNumber(-1, 1)][c-1].alive = true;
-          }
-        }
+  function seed() {    
+    for (let _ = 0; _ < numRows; _++) {
+      let r = getRandomNumber(1, (numColumns - CELL_SIZE));
+      let c = getRandomNumber(1, (numRows - CELL_SIZE));
+      grid[r][c].alive = true;
+      for (let __ = 0; __ < getRandomNumber(0, 8); __++) {
+        grid[r][c+getRandomNumber(-1, 1)].alive = true;
+        grid[r+getRandomNumber(-1, 1)][c].alive = true;
       }
     }
   }
