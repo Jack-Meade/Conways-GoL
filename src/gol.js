@@ -24,15 +24,11 @@
   }
 
   function createGrid() {
-    let rs = [];
-    for (let row = 0; row < height; row += CELL_SIZE) {
-      let cs = [];
-      for (let col = 0; col < width; col += CELL_SIZE) {
-        cs.push({ alive:false, x:col, y:row });
-      }
-      rs.push(cs);
-    }
-    return rs;
+    return Array.from({ length: Math.floor(height / CELL_SIZE) }, (_, r) => {
+      return Array.from({ length: Math.floor(width / CELL_SIZE) }, (_, c) => {
+        return { alive: false, x: c * CELL_SIZE, y: r * CELL_SIZE };
+      });
+    });
   }
 
   function seed() {
