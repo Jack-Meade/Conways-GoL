@@ -1,7 +1,7 @@
 (function() {
 
   const CELL_SIZE = 5;
-  let canvas, context, width, height;
+  let canvas, context, width, height, drawInterval, buttons;
   let grid, numRows, numColumns;
 
   document.addEventListener('DOMContentLoaded', init, false);
@@ -14,8 +14,10 @@
     grid       = createGrid();
     numRows    = grid.length;
     numColumns = grid[0].length;
+    buttons    = { pause: $('#pause'), play: $('#play'), step: $('#step') };
     seed();
-    window.setInterval(draw, 33);
+    addEventHandlers();
+    drawInterval = window.setInterval(draw, 33);
   }
 
   function createGrid() {
@@ -68,6 +70,22 @@
       }
     }
     return count;
+  }
+
+  function addEventHandlers() {
+    buttons.pause.on('click', () => { 
+      window.clearInterval(drawInterval);
+      toggleButtons();
+    });
+    buttons.play.on('click', () => { 
+      drawInterval = window.setInterval(draw, 33);
+      toggleButtons();
+    });
+    buttons.step.on('click', draw);
+  }
+
+  function toggleButtons() {
+    Object.values(buttons).forEach(elm => elm.attr('disabled', !elm.attr('disabled')));
   }
   
   function getRandomNumber(min, max) {
