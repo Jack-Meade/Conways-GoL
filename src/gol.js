@@ -56,9 +56,8 @@
     let updatedGrid = createGrid();
     for (let r = 0; r < rows; r ++) {
       for (let c = 0; c < columns; c ++) {
-        if (grid[r][c].alive) {
-          context.fillRect(grid[r][c].x, grid[r][c].y, CELL_SIZE, CELL_SIZE);
-        }
+        if (grid[r][c].alive) context.fillRect(grid[r][c].x, grid[r][c].y, CELL_SIZE, CELL_SIZE);
+        
         switch (getCurrentNeighbourCount(r, c)) {
           case 2:  updatedGrid[r][c].alive = grid[r][c].alive; break; 
           case 3:  updatedGrid[r][c].alive = true; break; 
@@ -78,7 +77,7 @@
     
     for (let checkRow = minRow; checkRow >= minRow && checkRow <= maxRow; checkRow++) {
       for (let checkCol = minCol; checkCol >= minCol && checkCol <= maxCol; checkCol++) {
-        if (grid[checkRow][checkCol].alive && grid[r][c] != grid[checkRow][checkCol]) count++;
+        if (grid[checkRow][checkCol].alive && grid[r][c] !== grid[checkRow][checkCol]) count++;
       }
     }
     return count;
