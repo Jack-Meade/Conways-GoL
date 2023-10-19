@@ -33,7 +33,7 @@
     });
   }
 
-  function seedGrid() {    
+  function seedGrid() {
     for (let _ = 0; _ < numRows; _++) {
       let r = getRandomNumber(1, (numColumns - CELL_SIZE));
       let c = getRandomNumber(1, (numRows - CELL_SIZE));
@@ -102,6 +102,7 @@
     controls.restart.on('click', () => {
       window.clearInterval(drawInterval);
       init(false, controls.seed[0].checked);
+      draw();
     });
   }
 
