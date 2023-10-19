@@ -85,24 +85,28 @@
       let disabled = (![controls.pause, controls.restart, controls.seed].includes(elm));
       elm.attr('disabled', disabled);
     });
-
-    controls.step.on('click', draw);
+    
     controls.pause.on('click', () => { 
-      window.clearInterval(drawInterval);
+      pauseGol();
       toggleButtons();
     });
+    
     controls.play.on('click', () => { 
       drawInterval = window.setInterval(draw, getCurrentSpeed());
       toggleButtons();
     });
+
+    controls.step.on('click', draw);
+    
+    controls.restart.on('click', () => {
+      pauseGol();
+      init(false, controls.seed[0].checked);
+      draw();
+    });
+    
     controls.speed.on('input', (event) => {
       controls.speed.attr('value', event.target.value);
       speedValue.text(`(updated every ${getCurrentSpeed()}ms)`);
-    });
-    controls.restart.on('click', () => {
-      window.clearInterval(drawInterval);
-      init(false, controls.seed[0].checked);
-      draw();
     });
   }
 
@@ -112,6 +116,10 @@
 
   function toggleButtons() {
     Object.values(controls).forEach(elm => elm.attr('disabled', !elm.attr('disabled')));
+  }
+
+  function pauseGol() {
+    drawInterval = window.clearInterval(drawInterval);
   }
   
   function getRandomNumber(min, max) {
