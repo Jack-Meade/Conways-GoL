@@ -4,7 +4,7 @@
   const SPEED_VALUES = [5, 50, 100, 200, 500, 1000, 2000, 5000];
   let canvas, context, width, height;
   let grid, numRows, numColumns;
-  let controls, drawInterval;
+  let controls, gameRunning;
 
   document.addEventListener('DOMContentLoaded', init, false);
 
@@ -123,11 +123,11 @@
     });
     
     $(canvas).on('mousedown', (event) => {
-      if (drawInterval) return;
+      if (gameRunning) return;
       let rect = canvas.getBoundingClientRect();
       let r = Math.floor((event.clientY - rect.top) / CELL_SIZE);
       let c = Math.floor((event.clientX - rect.left) / CELL_SIZE);
-      let [status, func] = grid[r][c] ? [0, "clearRect"] : [1, "fillRect"];
+      let [status, func] = grid[r][c] ? [0, 'clearRect'] : [1, 'fillRect'];
       grid[r][c] = status;
       drawCell(func, r, c);
     });
@@ -142,11 +142,11 @@
   }
 
   function playGol() {
-    drawInterval = window.setInterval(run, getCurrentSpeed());
+    gameRunning = window.setInterval(run, getCurrentSpeed());
   }
 
   function pauseGol() {
-    drawInterval = window.clearInterval(drawInterval);
+    gameRunning = window.clearInterval(gameRunning);
   }
   
   function getRandomNumber(min, max) {
