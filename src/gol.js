@@ -98,6 +98,13 @@
       let disabled = (![controls.pause, controls.restart, controls.seed].includes(elm));
       elm.attr('disabled', disabled);
     });
+
+    $(document).on('keydown', (event) => {
+      if (event.code === "Space" && !$('#step').attr('disabled')) {
+        event.preventDefault();
+        run();
+      }
+    });
     
     controls.pause.on('click', () => { 
       pauseGol();
