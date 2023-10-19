@@ -77,6 +77,7 @@
   function setupControls() {
     let speedValue = $('#speed-output');
     speedValue.text(`(Updated every ${getCurrentSpeed()}ms)`);
+    
     Object.values(controls).forEach(elm => {
       let disabled = (![controls.pause, controls.restart].includes(elm));
       elm.attr('disabled', disabled);
