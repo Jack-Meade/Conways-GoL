@@ -8,7 +8,7 @@
 
   document.addEventListener('DOMContentLoaded', init, false);
 
-  function init() {
+  function init(starting) {
     canvas       = $('canvas')[0];
     context      = canvas.getContext('2d');
     width        = canvas.width;
@@ -16,10 +16,10 @@
     grid         = createGrid();
     numRows      = grid.length;
     numColumns   = grid[0].length;
-    controls     = { pause: $('#pause'), play: $('#play'), step: $('#step'), speed: $('#speed-input') };
+    controls     = { pause: $('#pause'), play: $('#play'), step: $('#step'), speed: $('#speed-input'), restart: $('#restart') };
     drawInterval = window.setInterval(draw, getCurrentSpeed());
     seed();
-    setupControls();
+    if (starting && starting.type === 'DOMContentLoaded') setupControls();
   }
 
   function createGrid() {
@@ -78,7 +78,7 @@
     let speedValue = $('#speed-output');
     speedValue.text(`(Updated every ${getCurrentSpeed()}ms)`);
     Object.values(controls).forEach(elm => {
-      let disabled = (elm !== controls.pause);
+      let disabled = (![controls.pause, controls.restart].includes(elm));
       elm.attr('disabled', disabled);
     });
 
@@ -94,6 +94,10 @@
     controls.speed.on('input', (event) => {
       controls.speed.attr('value', event.target.value);
       speedValue.text(`(Updated every ${getCurrentSpeed()}ms)`);
+    });
+    controls.restart.on('click', () => {
+      window.clearInterval(drawInterval);
+      init(false);
     });
   }
 
