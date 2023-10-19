@@ -7,14 +7,20 @@ body {
 }
 
 canvas {
-	border: 1px solid black;
+  border: 1px solid black;
+  margin: auto 20%;
+  width: 60%;
+}
+
+#config-section label:nth-child(1) {
+  align-items: center;
+  display: flex;
 }
 
 section {
   margin-bottom: .5em;
 }
 
-#config-section label:nth-child(1) {
-  align-items: center;
-  display: flex;
+#speed-output {
+  margin-left: .5em;
 }
