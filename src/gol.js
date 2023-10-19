@@ -26,10 +26,8 @@
   }
 
   function createGrid() {
-    return Array.from({ length: Math.floor(height / CELL_SIZE) }, (_, r) => {
-      return Array.from({ length: Math.floor(width / CELL_SIZE) }, (_, c) => {
-        return { alive: false, x: c * CELL_SIZE, y: r * CELL_SIZE };
-      });
+    return Array.from({ length: Math.floor(height / CELL_SIZE) }, () => {
+      return new Array(Math.floor(width / CELL_SIZE)).fill(0);
     });
   }
 
@@ -37,10 +35,10 @@
     for (let _ = 0; _ < numRows; _++) {
       let r = getRandomNumber(1, (numColumns - CELL_SIZE));
       let c = getRandomNumber(1, (numRows - CELL_SIZE));
-      grid[r][c].alive = true;
+      grid[r][c] = 1;
       for (let __ = 0; __ < getRandomNumber(0, 8); __++) {
-        grid[r][c+getRandomNumber(-1, 1)].alive = true;
-        grid[r+getRandomNumber(-1, 1)][c].alive = true;
+        grid[r][c+getRandomNumber(-1, 1)] = 1;
+        grid[r+getRandomNumber(-1, 1)][c] = 1;
       }
     }
   }
@@ -54,9 +52,13 @@
     context.clearRect(0, 0, width, height);
     for (let r = 0; r < numRows; r ++) {
       for (let c = 0; c < numColumns; c ++) {
-        if (grid[r][c].alive) context.fillRect(grid[r][c].x, grid[r][c].y, CELL_SIZE, CELL_SIZE);
+        if (grid[r][c]) drawCell('fillRect', r, c);
       }
     }
+  }
+  
+  function drawCell(func, r, c) {
+    context[func](c * CELL_SIZE, r * CELL_SIZE, CELL_SIZE, CELL_SIZE);
   }
 
   function update() {
@@ -64,9 +66,9 @@
     for (let r = 0; r < numRows; r ++) {
       for (let c = 0; c < numColumns; c ++) {        
         switch (getCurrentNeighbourCount(r, c)) {
-          case 2:  updatedGrid[r][c].alive = grid[r][c].alive; break; 
-          case 3:  updatedGrid[r][c].alive = true; break; 
-          default: updatedGrid[r][c].alive = false;
+          case 2:  updatedGrid[r][c] = grid[r][c]; break; 
+          case 3:  updatedGrid[r][c] = 1; break; 
+          default: updatedGrid[r][c] = 0;
         }
       }
     }
@@ -82,7 +84,7 @@
     
     for (let checkRow = minRow; checkRow >= minRow && checkRow <= maxRow; checkRow++) {
       for (let checkCol = minCol; checkCol >= minCol && checkCol <= maxCol; checkCol++) {
-        if (grid[checkRow][checkCol].alive && grid[r][c] !== grid[checkRow][checkCol]) count++;
+        if (grid[checkRow][checkCol] && !(r === checkRow && c === checkCol)) count++;
       }
     }
     return count;
@@ -107,10 +109,7 @@
       toggleButtons();
     });
 
-    controls.step.on('click', () => {
-      update();
-      draw();
-    });
+    controls.step.on('click', run);
     
     controls.restart.on('click', () => {
       pauseGol();
@@ -128,9 +127,9 @@
       let rect = canvas.getBoundingClientRect();
       let r = Math.floor((event.clientY - rect.top) / CELL_SIZE);
       let c = Math.floor((event.clientX - rect.left) / CELL_SIZE);
-      let [alive, func] = grid[r][c].alive ? [false, "clearRect"] : [true, "fillRect"];
-      grid[r][c].alive = alive;
-      context[func](grid[r][c].x, grid[r][c].y, CELL_SIZE, CELL_SIZE);
+      let [status, func] = grid[r][c] ? [0, "clearRect"] : [1, "fillRect"];
+      grid[r][c] = status;
+      drawCell(func, r, c);
     });
   }
 
