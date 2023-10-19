@@ -14,7 +14,7 @@ section {
   margin-bottom: .5em;
 }
 
-#speed-section label {
+#config-section label:nth-child(1) {
   align-items: center;
   display: flex;
 }

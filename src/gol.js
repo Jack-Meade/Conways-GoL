@@ -8,7 +8,7 @@
 
   document.addEventListener('DOMContentLoaded', init, false);
 
-  function init(starting) {
+  function init(starting, seed) {
     canvas       = $('canvas')[0];
     context      = canvas.getContext('2d');
     width        = canvas.width;
@@ -16,10 +16,13 @@
     grid         = createGrid();
     numRows      = grid.length;
     numColumns   = grid[0].length;
-    controls     = { pause: $('#pause'), play: $('#play'), step: $('#step'), speed: $('#speed-input'), restart: $('#restart') };
+    controls     = { 
+      pause: $('#pause'), play: $('#play'), step: $('#step'), 
+      speed: $('#speed-input'), restart: $('#restart'), seed: $('#seed-checkbox')
+    };
     drawInterval = window.setInterval(draw, getCurrentSpeed());
-    seed();
-    if (starting && starting.type === 'DOMContentLoaded') setupControls();
+    if (starting || seed) seedGrid();
+    if (starting) setupControls();
   }
 
   function createGrid() {
@@ -30,7 +33,7 @@
     });
   }
 
-  function seed() {    
+  function seedGrid() {    
     for (let _ = 0; _ < numRows; _++) {
       let r = getRandomNumber(1, (numColumns - CELL_SIZE));
       let c = getRandomNumber(1, (numRows - CELL_SIZE));
@@ -76,10 +79,10 @@
 
   function setupControls() {
     let speedValue = $('#speed-output');
-    speedValue.text(`(Updated every ${getCurrentSpeed()}ms)`);
-    
+    speedValue.text(`(updated every ${getCurrentSpeed()}ms)`);
+
     Object.values(controls).forEach(elm => {
-      let disabled = (![controls.pause, controls.restart].includes(elm));
+      let disabled = (![controls.pause, controls.restart, controls.seed].includes(elm));
       elm.attr('disabled', disabled);
     });
 
@@ -94,11 +97,11 @@
     });
     controls.speed.on('input', (event) => {
       controls.speed.attr('value', event.target.value);
-      speedValue.text(`(Updated every ${getCurrentSpeed()}ms)`);
+      speedValue.text(`(updated every ${getCurrentSpeed()}ms)`);
     });
     controls.restart.on('click', () => {
       window.clearInterval(drawInterval);
-      init(false);
+      init(false, controls.seed[0].checked);
     });
   }
 

@@ -17,10 +17,14 @@
     <button id="step" disabled>Step</button>
     <button id="restart">Restart</button>
   </section>
-  <section id="speed-section">
+  <section id="config-section">
     <label>Speed:
       <input id="speed-input" type="range" min="0" max="7" value="1" step="1" autocomplete="off" disabled/>
       <span id="speed-output"></span>
+    </label>
+    <label>Seed:
+      <input id="seed-checkbox" type="checkbox" value="true" checked/>
+      (restart required)
     </label>
   </section>
   <canvas height="500" width="500"></canvas>
