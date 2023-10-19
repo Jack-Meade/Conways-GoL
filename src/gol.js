@@ -20,7 +20,7 @@
       pause: $('#pause'), play: $('#play'), step: $('#step'), 
       speed: $('#speed-input'), restart: $('#restart'), seed: $('#seed-checkbox')
     };
-    drawInterval = window.setInterval(draw, getCurrentSpeed());
+    playGol()
     if (starting || seed) seedGrid();
     if (starting) setupControls();
   }
@@ -45,13 +45,24 @@
     }
   }
 
+  function run() {
+    update();
+    draw();
+  }
+
   function draw() {
     context.clearRect(0, 0, width, height);
-    let updatedGrid = createGrid();
     for (let r = 0; r < numRows; r ++) {
       for (let c = 0; c < numColumns; c ++) {
         if (grid[r][c].alive) context.fillRect(grid[r][c].x, grid[r][c].y, CELL_SIZE, CELL_SIZE);
-        
+      }
+    }
+  }
+
+  function update() {
+    let updatedGrid = createGrid();
+    for (let r = 0; r < numRows; r ++) {
+      for (let c = 0; c < numColumns; c ++) {        
         switch (getCurrentNeighbourCount(r, c)) {
           case 2:  updatedGrid[r][c].alive = grid[r][c].alive; break; 
           case 3:  updatedGrid[r][c].alive = true; break; 
@@ -92,11 +103,14 @@
     });
     
     controls.play.on('click', () => { 
-      drawInterval = window.setInterval(draw, getCurrentSpeed());
+      playGol()
       toggleButtons();
     });
 
-    controls.step.on('click', draw);
+    controls.step.on('click', () => {
+      update();
+      draw();
+    });
     
     controls.restart.on('click', () => {
       pauseGol();
@@ -108,6 +122,16 @@
       controls.speed.attr('value', event.target.value);
       speedValue.text(`(updated every ${getCurrentSpeed()}ms)`);
     });
+    
+    $(canvas).on('mousedown', (event) => {
+      if (drawInterval) return;
+      let rect = canvas.getBoundingClientRect();
+      let r = Math.floor((event.clientY - rect.top) / CELL_SIZE);
+      let c = Math.floor((event.clientX - rect.left) / CELL_SIZE);
+      let [alive, func] = grid[r][c].alive ? [false, "clearRect"] : [true, "fillRect"];
+      grid[r][c].alive = alive;
+      context[func](grid[r][c].x, grid[r][c].y, CELL_SIZE, CELL_SIZE);
+    });
   }
 
   function getCurrentSpeed() {
@@ -116,6 +140,10 @@
 
   function toggleButtons() {
     Object.values(controls).forEach(elm => elm.attr('disabled', !elm.attr('disabled')));
+  }
+
+  function playGol() {
+    drawInterval = window.setInterval(run, getCurrentSpeed());
   }
 
   function pauseGol() {
