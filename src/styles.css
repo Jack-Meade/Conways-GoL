@@ -10,7 +10,6 @@ canvas {
   border: 1px solid black;
   cursor: crosshair;
   margin: auto 20%;
-  width: 60%;
 }
 
 #config-section label:nth-child(1) {
