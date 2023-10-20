@@ -30,8 +30,9 @@
   }
 
   function createGrid() {
-    return Array.from({ length: Math.floor(height / getCurrentSize()) }, () => {
-      return new Array(Math.floor(width / getCurrentSize())).fill(0);
+    let size = getCurrentSize();
+    return Array.from({ length: Math.floor(height / size) }, () => {
+      return new Array(Math.floor(width / size)).fill(0);
     });
   }
 
@@ -54,21 +55,22 @@
 
   function draw() {
     context.clearRect(0, 0, width, height);
-    let curPopulation = 0;
+    let currentPopulation = 0;
     for (let r = 0; r < numRows; r ++) {
       for (let c = 0; c < numColumns; c ++) {
         if (grid[r][c]) {
-          curPopulation++;
+          currentPopulation++;
           drawCell('fillRect', r, c);
         }
       }
     }
-    population = curPopulation;
+    population = currentPopulation;
     updatePopulationText();
   }
   
   function drawCell(func, r, c) {
-    context[func](c * getCurrentSize(), r * getCurrentSize(), getCurrentSize(), getCurrentSize());
+    let size = getCurrentSize();
+    context[func](c * size, r * size, size, size);
   }
 
   function update() {
@@ -113,7 +115,7 @@
     $('h3').on('click', (event) => {
       let rules = $('ul');
       $(event.target).text(`Rules (click to ${rules.is(':visible') ? 'show' : 'hide' })`);
-      $('ul').toggle('slow');
+      rules.toggle('slow');
     });
     
     controls.pause.on('click', () => { 
@@ -154,9 +156,10 @@
     
     $(canvas).on('mousedown', (event) => {
       if (restartRequired) return;
+      let size = getCurrentSize();
       let bounded = canvas.getBoundingClientRect();
-      let r = Math.floor((event.clientY - bounded.top) / getCurrentSize());
-      let c = Math.floor((event.clientX - bounded.left) / getCurrentSize());
+      let r = Math.floor((event.clientY - bounded.top) / size);
+      let c = Math.floor((event.clientX - bounded.left) / size);
       let [status, func, pop] = grid[r][c] ? [0, 'clearRect', -1] : [1, 'fillRect', 1];
       grid[r][c] = status;
       population += pop;

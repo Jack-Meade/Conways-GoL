@@ -21,6 +21,6 @@ section {
   margin-bottom: .5em;
 }
 
-#speed-output {
+#speed-output, #size-output {
   margin-left: .5em;
 }
