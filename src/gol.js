@@ -117,10 +117,7 @@
       toggleButtons();
     });
 
-    controls.step.on('click', () => {
-      if (restartRequired) return;
-      run();
-    });
+    controls.step.on('click', run);
     
     controls.restart.on('click', () => {
       restartRequired = false;
@@ -136,7 +133,8 @@
 
     controls.size.input.on('input', (event) => {
       controls.size.input.attr('value', event.target.value);
-      controls.size.output.text(`(${getCurrentSize()} - restart required, step/interact disabled, play to continue)`);
+      controls.size.output.text(`(${getCurrentSize()} - restart required, play to continue)`);
+      controls.step.attr('disabled', true);
       restartRequired = true;
     });
     
