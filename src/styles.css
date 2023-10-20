@@ -12,7 +12,7 @@ canvas {
   margin: auto 20%;
 }
 
-#config-section label:nth-child(1) {
+#config-section label:has(input[type='range']) {
   align-items: center;
   display: flex;
 }

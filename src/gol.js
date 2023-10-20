@@ -1,10 +1,10 @@
 (function() {
 
-  const CELL_SIZE = 5;
-  const SPEED_VALUES = [5, 50, 100, 200, 500, 1000, 2000, 5000];
+  const CELL_SIZES = [4, 5, 7, 10, 14];
+  const SPEED_VALUES = [50, 100, 200, 500, 1000, 2000, 5000];
   let canvas, context, width, height;
   let grid, numRows, numColumns;
-  let controls, gameRunning;
+  let controls, gameRunning, restartRequired;
 
   document.addEventListener('DOMContentLoaded', init, false);
 
@@ -13,28 +13,30 @@
     context      = canvas.getContext('2d');
     width        = canvas.width;
     height       = canvas.height;
+    controls     = { 
+      pause: $('#pause'), play: $('#play'), step: $('#step'), 
+      restart: $('#restart'), seed: $('#seed-checkbox'),
+      speed: { input: $('#speed-input'), output: $('#speed-output') },
+      size: { input: $('#size-input'), output: $('#size-output') },
+    };
     grid         = createGrid();
     numRows      = grid.length;
     numColumns   = grid[0].length;
-    controls     = { 
-      pause: $('#pause'), play: $('#play'), step: $('#step'), 
-      speed: $('#speed-input'), restart: $('#restart'), seed: $('#seed-checkbox')
-    };
     playGol()
     if (starting || seed) seedGrid();
     if (starting) setupControls();
   }
 
   function createGrid() {
-    return Array.from({ length: Math.floor(height / CELL_SIZE) }, () => {
-      return new Array(Math.floor(width / CELL_SIZE)).fill(0);
+    return Array.from({ length: Math.floor(height / getCurrentSize()) }, () => {
+      return new Array(Math.floor(width / getCurrentSize())).fill(0);
     });
   }
 
   function seedGrid() {
     for (let _ = 0; _ < numRows; _++) {
-      let r = getRandomNumber(1, (numColumns - CELL_SIZE));
-      let c = getRandomNumber(1, (numRows - CELL_SIZE));
+      let r = getRandomNumber(1, (numColumns - getCurrentSize()));
+      let c = getRandomNumber(1, (numRows - getCurrentSize()));
       grid[r][c] = 1;
       for (let __ = 0; __ < getRandomNumber(0, 8); __++) {
         grid[r][c+getRandomNumber(-1, 1)] = 1;
@@ -58,7 +60,7 @@
   }
   
   function drawCell(func, r, c) {
-    context[func](c * CELL_SIZE, r * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+    context[func](c * getCurrentSize(), r * getCurrentSize(), getCurrentSize(), getCurrentSize());
   }
 
   function update() {
@@ -91,16 +93,10 @@
   }
 
   function setupControls() {
-    let speedValue = $('#speed-output');
-    speedValue.text(`(updated every ${getCurrentSpeed()}ms)`);
-
-    Object.values(controls).forEach(elm => {
-      let disabled = (![controls.pause, controls.restart, controls.seed].includes(elm));
-      elm.attr('disabled', disabled);
-    });
+    resetButtons();
 
     $(document).on('keydown', (event) => {
-      if (event.code === "Space" && !$('#step').attr('disabled')) {
+      if (event.code === 'Space' && !controls.step.attr('disabled')) {
         event.preventDefault();
         run();
       }
@@ -110,30 +106,45 @@
       pauseGol();
       toggleButtons();
     });
-    
-    controls.play.on('click', () => { 
+
+    controls.play.on('click', () => {
+      if (restartRequired) {
+        resetButtons();
+        controls.restart.trigger('click');
+        return;
+      }
       playGol()
       toggleButtons();
     });
 
-    controls.step.on('click', run);
+    controls.step.on('click', () => {
+      if (restartRequired) return;
+      run();
+    });
     
     controls.restart.on('click', () => {
+      restartRequired = false;
       pauseGol();
       init(false, controls.seed[0].checked);
       draw();
     });
     
-    controls.speed.on('input', (event) => {
-      controls.speed.attr('value', event.target.value);
-      speedValue.text(`(updated every ${getCurrentSpeed()}ms)`);
+    controls.speed.input.on('input', (event) => {
+      controls.speed.input.attr('value', event.target.value);
+      controls.speed.output.text(`(updated every ${getCurrentSpeed()}ms)`);
+    });
+
+    controls.size.input.on('input', (event) => {
+      controls.size.input.attr('value', event.target.value);
+      controls.size.output.text(`(${getCurrentSize()} - restart required, step/interact disabled, play to continue)`);
+      restartRequired = true;
     });
     
     $(canvas).on('mousedown', (event) => {
-      if (gameRunning) return;
+      if (gameRunning || restartRequired) return;
       let rect = canvas.getBoundingClientRect();
-      let r = Math.floor((event.clientY - rect.top) / CELL_SIZE);
-      let c = Math.floor((event.clientX - rect.left) / CELL_SIZE);
+      let r = Math.floor((event.clientY - rect.top) / getCurrentSize());
+      let c = Math.floor((event.clientX - rect.left) / getCurrentSize());
       let [status, func] = grid[r][c] ? [0, 'clearRect'] : [1, 'fillRect'];
       grid[r][c] = status;
       drawCell(func, r, c);
@@ -141,11 +152,28 @@
   }
 
   function getCurrentSpeed() {
-    return SPEED_VALUES[controls.speed.attr('value')];
+    return SPEED_VALUES[controls.speed.input.attr('value')];
+  }
+
+  function getCurrentSize() {
+    return CELL_SIZES[controls.size.input.attr('value')];
+  }
+
+  function resetButtons() {
+    controls.speed.output.text(`(updated every ${getCurrentSpeed()}ms)`);
+    controls.size.output.text(`(${getCurrentSize()} - changing this will cause a restart)`);
+    Object.values(controls).forEach(elm => {
+      elm = (!elm.attr) ? $(elm.input) : elm;
+      let disabled = (![controls.pause, controls.restart, controls.seed].includes(elm));
+      elm.attr('disabled', disabled);
+    });
   }
 
   function toggleButtons() {
-    Object.values(controls).forEach(elm => elm.attr('disabled', !elm.attr('disabled')));
+    Object.values(controls).forEach(elm => {
+      elm = (!elm.attr) ? $(elm.input) : elm;
+      elm.attr('disabled', !elm.attr('disabled'));
+    });
   }
 
   function playGol() {
