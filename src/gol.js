@@ -4,24 +4,26 @@
   const SPEED_VALUES = [50, 100, 200, 500, 1000, 2000, 5000];
   let canvas, context, width, height;
   let grid, numRows, numColumns;
-  let controls, gameRunning, restartRequired;
+  let controls, gameRunning, restartRequired, population;
 
   document.addEventListener('DOMContentLoaded', init, false);
 
   function init(starting, seed) {
-    canvas       = $('canvas')[0];
-    context      = canvas.getContext('2d');
-    width        = canvas.width;
-    height       = canvas.height;
-    controls     = { 
+    canvas   = $('canvas')[0];
+    context  = canvas.getContext('2d');
+    width    = canvas.width;
+    height   = canvas.height;
+    controls = { 
       pause: $('#pause'), play: $('#play'), step: $('#step'), 
       restart: $('#restart'), seed: $('#seed-checkbox'),
       speed: { input: $('#speed-input'), output: $('#speed-output') },
       size: { input: $('#size-input'), output: $('#size-output') },
     };
-    grid         = createGrid();
-    numRows      = grid.length;
-    numColumns   = grid[0].length;
+    restartRequired = false;
+    population      = 0;
+    grid            = createGrid();
+    numRows         = grid.length;
+    numColumns      = grid[0].length;
     playGol()
     if (starting || seed) seedGrid();
     if (starting) setupControls();
@@ -52,11 +54,17 @@
 
   function draw() {
     context.clearRect(0, 0, width, height);
+    let curPopulation = 0;
     for (let r = 0; r < numRows; r ++) {
       for (let c = 0; c < numColumns; c ++) {
-        if (grid[r][c]) drawCell('fillRect', r, c);
+        if (grid[r][c]) {
+          curPopulation++;
+          drawCell('fillRect', r, c);
+        }
       }
     }
+    population = curPopulation;
+    updatePopulationText();
   }
   
   function drawCell(func, r, c) {
@@ -139,14 +147,20 @@
     });
     
     $(canvas).on('mousedown', (event) => {
-      if (gameRunning || restartRequired) return;
-      let rect = canvas.getBoundingClientRect();
-      let r = Math.floor((event.clientY - rect.top) / getCurrentSize());
-      let c = Math.floor((event.clientX - rect.left) / getCurrentSize());
-      let [status, func] = grid[r][c] ? [0, 'clearRect'] : [1, 'fillRect'];
+      if (restartRequired) return;
+      let bounded = canvas.getBoundingClientRect();
+      let r = Math.floor((event.clientY - bounded.top) / getCurrentSize());
+      let c = Math.floor((event.clientX - bounded.left) / getCurrentSize());
+      let [status, func, pop] = grid[r][c] ? [0, 'clearRect', -1] : [1, 'fillRect', 1];
       grid[r][c] = status;
+      population += pop;
+      updatePopulationText();
       drawCell(func, r, c);
     });
+  }
+
+  function updatePopulationText() {
+    $('#population').text(`Population: ${population}`);
   }
 
   function getCurrentSpeed() {
