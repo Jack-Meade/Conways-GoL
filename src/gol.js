@@ -1,6 +1,6 @@
 (function() {
 
-  const CELL_SIZES = [4, 5, 7, 10, 14];
+  const CELL_SIZES   = [4, 5, 7, 10, 14];
   const SPEED_VALUES = [50, 100, 200, 500, 1000, 2000, 5000];
   let canvas, context, width, height;
   let grid, numRows, numColumns;
@@ -13,8 +13,8 @@
     context  = canvas.getContext('2d');
     width    = canvas.width;
     height   = canvas.height;
-    controls = { 
-      pause: $('#pause'), play: $('#play'), step: $('#step'), 
+    controls = {
+      pause: $('#pause'), play: $('#play'), step: $('#step'),
       restart: $('#restart'), seed: $('#seed-checkbox'),
       speed: { input: $('#speed-input'), output: $('#speed-output') },
       size: { input: $('#size-input'), output: $('#size-output') },
@@ -42,8 +42,8 @@
       let c = getRandomNumber(1, (numRows - 2));
       grid[r][c] = 1;
       for (let __ = 0; __ < getRandomNumber(0, 8); __++) {
-        grid[r][c+getRandomNumber(-1, 1)] = 1;
-        grid[r+getRandomNumber(-1, 1)][c] = 1;
+        grid[r][c + getRandomNumber(-1, 1)] = 1;
+        grid[r + getRandomNumber(-1, 1)][c] = 1;
       }
     }
   }
@@ -56,8 +56,8 @@
   function draw() {
     context.clearRect(0, 0, width, height);
     let currentPopulation = 0;
-    for (let r = 0; r < numRows; r ++) {
-      for (let c = 0; c < numColumns; c ++) {
+    for (let r = 0; r < numRows; r++) {
+      for (let c = 0; c < numColumns; c++) {
         if (grid[r][c]) {
           currentPopulation++;
           drawCell('fillRect', r, c);
@@ -67,7 +67,7 @@
     population = currentPopulation;
     updateInfoTexts();
   }
-  
+
   function drawCell(func, r, c) {
     let size = getCurrentSize();
     context[func](c * size, r * size, size, size);
@@ -75,11 +75,11 @@
 
   function update() {
     let updatedGrid = createGrid();
-    for (let r = 0; r < numRows; r ++) {
-      for (let c = 0; c < numColumns; c ++) {        
+    for (let r = 0; r < numRows; r++) {
+      for (let c = 0; c < numColumns; c++) {
         switch (getCurrentNeighbourCount(r, c)) {
-          case 2:  updatedGrid[r][c] = grid[r][c]; break; 
-          case 3:  updatedGrid[r][c] = 1; break; 
+          case 2:  updatedGrid[r][c] = grid[r][c]; break;
+          case 3:  updatedGrid[r][c] = 1;          break;
           default: updatedGrid[r][c] = 0;
         }
       }
@@ -93,7 +93,7 @@
     let minCol = (c === 0)              ? 0 : c - 1;
     let maxRow = (r === numRows - 1)    ? r : r + 1;
     let maxCol = (c === numColumns - 1) ? c : c + 1;
-    
+
     for (let checkRow = minRow; checkRow >= minRow && checkRow <= maxRow; checkRow++) {
       for (let checkCol = minCol; checkCol >= minCol && checkCol <= maxCol; checkCol++) {
         if (grid[checkRow][checkCol] && !(r === checkRow && c === checkCol)) count++;
@@ -113,8 +113,8 @@
     });
 
     $('h3').on('click', () => $('ul').toggle('slow'));
-    
-    controls.pause.on('click', () => { 
+
+    controls.pause.on('click', () => {
       pauseGol();
       toggleControls();
     });
@@ -125,9 +125,9 @@
     });
 
     controls.step.on('click', run);
-    
+
     controls.restart.on('click', () => {
-      let wasPaused = !gameRunning;
+      let wasPaused   = !gameRunning;
       restartRequired = false;
       pauseGol();
       init(false, controls.seed[0].checked);
@@ -138,7 +138,7 @@
         toggleControls();
       }
     });
-    
+
     controls.speed.input.on('input', (event) => {
       controls.speed.input.attr('value', event.target.value);
       controls.speed.output.text(`(updated every ${getCurrentSpeed()}ms)`);
@@ -150,7 +150,7 @@
       [controls.play, controls.step].forEach(elm => elm.attr('disabled', true));
       restartRequired = true;
     });
-    
+
     $(canvas).on('mousedown', (event) => {
       if (restartRequired) return;
       let size = getCurrentSize();
@@ -205,7 +205,7 @@
   function pauseGol() {
     gameRunning = window.clearInterval(gameRunning);
   }
-  
+
   function getRandomNumber(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
