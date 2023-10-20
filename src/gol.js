@@ -35,8 +35,8 @@
 
   function seedGrid() {
     for (let _ = 0; _ < numRows; _++) {
-      let r = getRandomNumber(1, (numColumns - getCurrentSize()));
-      let c = getRandomNumber(1, (numRows - getCurrentSize()));
+      let r = getRandomNumber(1, (numColumns - 2));
+      let c = getRandomNumber(1, (numRows - 2));
       grid[r][c] = 1;
       for (let __ = 0; __ < getRandomNumber(0, 8); __++) {
         grid[r][c+getRandomNumber(-1, 1)] = 1;
