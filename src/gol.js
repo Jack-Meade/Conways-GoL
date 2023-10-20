@@ -116,26 +116,27 @@
     
     controls.pause.on('click', () => { 
       pauseGol();
-      toggleButtons();
+      toggleControls();
     });
 
     controls.play.on('click', () => {
-      if (restartRequired) {
-        resetButtons();
-        controls.restart.trigger('click');
-        return;
-      }
       playGol()
-      toggleButtons();
+      toggleControls();
     });
 
     controls.step.on('click', run);
     
     controls.restart.on('click', () => {
+      let wasPaused = !gameRunning;
       restartRequired = false;
       pauseGol();
       init(false, controls.seed[0].checked);
       draw();
+      resetButtons();
+      if (wasPaused) {
+        pauseGol();
+        toggleControls();
+      }
     });
     
     controls.speed.input.on('input', (event) => {
@@ -145,8 +146,8 @@
 
     controls.size.input.on('input', (event) => {
       controls.size.input.attr('value', event.target.value);
-      controls.size.output.text(`(${getCurrentSize()} - restart required, play to continue)`);
-      controls.step.attr('disabled', true);
+      controls.size.output.text(`(${getCurrentSize()} - restart required to continue)`);
+      [controls.play, controls.step].forEach(elm => elm.attr('disabled', true));
       restartRequired = true;
     });
     
@@ -178,19 +179,22 @@
 
   function resetButtons() {
     controls.speed.output.text(`(updated every ${getCurrentSpeed()}ms)`);
-    controls.size.output.text(`(${getCurrentSize()} - changing this will cause a restart)`);
-    Object.values(controls).forEach(elm => {
-      elm = (!elm.attr) ? $(elm.input) : elm;
-      let disabled = (![controls.pause, controls.restart, controls.seed].includes(elm));
-      elm.attr('disabled', disabled);
-    });
+    controls.size.output.text(`(${getCurrentSize()} - changing this will necessitate a restart)`);
+    Object.values(controls)
+      .map(elm => elm = (!elm.attr) ? $(elm.input) : elm)
+      .forEach(elm => {
+        let disabled = (![controls.pause, controls.restart, controls.seed].includes(elm));
+        elm.attr('disabled', disabled);
+      });
   }
 
-  function toggleButtons() {
-    Object.values(controls).forEach(elm => {
-      elm = (!elm.attr) ? $(elm.input) : elm;
-      if (elm !== controls.seed) elm.attr('disabled', !elm.attr('disabled'));
-    });
+  function toggleControls() {
+    Object.values(controls)
+      .filter(elm => ![controls.restart, controls.seed].includes(elm))
+      .map(elm => elm = (!elm.attr) ? $(elm.input) : elm)
+      .forEach(elm => {
+        elm.attr('disabled', !elm.attr('disabled'));
+      });
   }
 
   function playGol() {
