@@ -4,7 +4,7 @@
   const SPEED_VALUES = [50, 100, 200, 500, 1000, 2000, 5000];
   let canvas, context, width, height;
   let grid, numRows, numColumns;
-  let controls, gameRunning, restartRequired, population;
+  let controls, gameRunning, restartRequired, population, time;
 
   document.addEventListener('DOMContentLoaded', init, false);
 
@@ -20,7 +20,7 @@
       size: { input: $('#size-input'), output: $('#size-output') },
     };
     restartRequired = false;
-    population      = 0;
+    population      = time = 0;
     grid            = createGrid();
     numRows         = grid.length;
     numColumns      = grid[0].length;
@@ -65,7 +65,7 @@
       }
     }
     population = currentPopulation;
-    updatePopulationText();
+    updateInfoTexts();
   }
   
   function drawCell(func, r, c) {
@@ -160,13 +160,14 @@
       let [status, func, pop] = grid[r][c] ? [0, 'clearRect', -1] : [1, 'fillRect', 1];
       grid[r][c] = status;
       population += pop;
-      updatePopulationText();
+      updateInfoTexts(true);
       drawCell(func, r, c);
     });
   }
 
-  function updatePopulationText() {
+  function updateInfoTexts(userInput) {
     $('#population').text(`Population: ${population}`);
+    if (!userInput) $('#time').text(`Time: ${++time}`);
   }
 
   function getCurrentSpeed() {
