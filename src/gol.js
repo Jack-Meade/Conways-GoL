@@ -112,11 +112,7 @@
       }
     });
 
-    $('h3').on('click', (event) => {
-      let rules = $('ul');
-      $(event.target).text(`Rules (click to ${rules.is(':visible') ? 'show' : 'hide' })`);
-      rules.toggle('slow');
-    });
+    $('h3').on('click', () => $('ul').toggle('slow'));
     
     controls.pause.on('click', () => { 
       pauseGol();

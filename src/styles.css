@@ -6,10 +6,23 @@ body {
   width: 50%;
 }
 
+h3 {
+  background-color: grey;
+  border-radius: .5em;
+  cursor: pointer;
+  padding: .5em;
+  margin: 0;
+}
+
 canvas {
   border: 1px solid black;
   cursor: crosshair;
-  margin: auto 20%;
+  display: inline;
+}
+
+#canvas-section {
+  text-align: center;
+  width: 100%;
 }
 
 #config-section label:has(input[type='range']) {
@@ -21,6 +34,10 @@ section {
   margin-bottom: .5em;
 }
 
-#speed-output, #size-output {
+#size-output, #speed-output {
   margin-left: .5em;
+}
+
+ul {
+  display: none;
 }
