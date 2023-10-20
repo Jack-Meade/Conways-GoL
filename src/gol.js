@@ -193,7 +193,7 @@
   function toggleButtons() {
     Object.values(controls).forEach(elm => {
       elm = (!elm.attr) ? $(elm.input) : elm;
-      elm.attr('disabled', !elm.attr('disabled'));
+      if (elm !== controls.seed) elm.attr('disabled', !elm.attr('disabled'));
     });
   }
 
