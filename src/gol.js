@@ -103,7 +103,7 @@
   }
 
   function setupControls() {
-    resetButtons();
+    resetControls();
 
     $(document).on('keydown', (event) => {
       if (event.code === 'Space' && !controls.step.attr('disabled')) {
@@ -132,7 +132,7 @@
       pauseGol();
       init(false, controls.seed[0].checked);
       draw();
-      resetButtons();
+      resetControls();
       if (wasPaused) {
         pauseGol();
         toggleControls();
@@ -178,7 +178,7 @@
     return CELL_SIZES[controls.size.input.attr('value')];
   }
 
-  function resetButtons() {
+  function resetControls() {
     controls.speed.output.text(`(updated every ${getCurrentSpeed()}ms)`);
     controls.size.output.text(`(${getCurrentSize()} - changing this will necessitate a restart)`);
     Object.values(controls)
