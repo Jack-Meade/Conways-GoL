@@ -18,14 +18,14 @@
       speed: { input: $('#speed-input'), output: $('#speed-output') },
       size: { input: $('#size-input'), output: $('#size-output') },
       seed: $('#seed-checkbox'),
-    };
+    }
     restartRequired = false;
     population = generation = 0;
     let size = getCurrentSize();
     numRows = Math.floor(height / size);
     numColumns = Math.floor(width / size);
     grid = createGrid();
-    playGol()
+    playGol();
     if (starting || seed) seedGrid();
     if (starting) setupControls();
   }
@@ -120,7 +120,7 @@
     });
 
     controls.play.on('click', () => {
-      playGol()
+      playGol();
       toggleControls();
     });
 
