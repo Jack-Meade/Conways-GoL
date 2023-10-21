@@ -4,7 +4,7 @@
   const SPEED_VALUES = [50, 100, 200, 500, 1000, 2000, 5000];
   let canvas, context, width, height;
   let grid, numRows, numColumns;
-  let controls, gameRunning, restartRequired, population, time;
+  let controls, gameRunning, restartRequired, population, generation;
 
   document.addEventListener('DOMContentLoaded', init, false);
 
@@ -20,7 +20,7 @@
       size: { input: $('#size-input'), output: $('#size-output') },
     };
     restartRequired = false;
-    population      = time = 0;
+    population      = generation = 0;
     grid            = createGrid();
     numRows         = grid.length;
     numColumns      = grid[0].length;
@@ -167,7 +167,7 @@
 
   function updateInfoTexts(userInput) {
     $('#population').text(`Population: ${population}`);
-    if (!userInput) $('#time').text(`Time: ${++time}`);
+    if (!userInput) $('#generation').text(`Generation: ${++generation}`);
   }
 
   function getCurrentSpeed() {
