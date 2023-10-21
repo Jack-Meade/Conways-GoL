@@ -165,24 +165,11 @@
     });
   }
 
-  function updateInfoTexts(userInput) {
-    $('#population').text(`Population: ${population}`);
-    if (!userInput) $('#generation').text(`Generation: ${++generation}`);
-  }
-
-  function getCurrentSpeed() {
-    return SPEED_VALUES[controls.speed.input.attr('value')];
-  }
-
-  function getCurrentSize() {
-    return CELL_SIZES[controls.size.input.attr('value')];
-  }
-
   function resetControls() {
     controls.speed.output.text(`(updated every ${getCurrentSpeed()}ms)`);
     controls.size.output.text(`(${getCurrentSize()} - changing this will necessitate a restart)`);
     Object.values(controls)
-      .map(elm => elm = (!elm.attr) ? $(elm.input) : elm)
+      .map(elm => elm = !elm.attr ? $(elm.input) : elm)
       .forEach(elm => {
         let disabled = (![controls.pause, controls.restart, controls.seed].includes(elm));
         elm.attr('disabled', disabled);
@@ -204,6 +191,19 @@
 
   function pauseGol() {
     gameRunning = window.clearInterval(gameRunning);
+  }
+
+  function updateInfoTexts(userInput) {
+    $('#population').text(`Population: ${population}`);
+    if (!userInput) $('#generation').text(`Generation: ${++generation}`);
+  }
+
+  function getCurrentSpeed() {
+    return SPEED_VALUES[controls.speed.input.attr('value')];
+  }
+
+  function getCurrentSize() {
+    return CELL_SIZES[controls.size.input.attr('value')];
   }
 
   function getRandomNumber(min, max) {
