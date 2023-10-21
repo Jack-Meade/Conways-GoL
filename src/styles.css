@@ -47,7 +47,8 @@ section {
   margin-bottom: .5em;
 }
 
-#size-output, #speed-output {
+#size-output,
+#speed-output {
   margin-left: .5em;
 }
 

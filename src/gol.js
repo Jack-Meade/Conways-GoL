@@ -1,6 +1,6 @@
-(function() {
+(function () {
 
-  const CELL_SIZES   = [4, 5, 7, 10, 14];
+  const CELL_SIZES = [4, 5, 7, 10, 14];
   const SPEED_VALUES = [50, 100, 200, 500, 1000, 2000, 5000];
   let canvas, context, width, height;
   let grid, numRows, numColumns;
@@ -9,22 +9,22 @@
   $(document).on('DOMContentLoaded', init);
 
   function init(starting, seed) {
-    canvas   = $('canvas')[0];
-    context  = canvas.getContext('2d');
-    width    = canvas.width;
-    height   = canvas.height;
+    canvas = $('canvas')[0];
+    context = canvas.getContext('2d');
+    width = canvas.width;
+    height = canvas.height;
     controls = {
-      pause: $('#pause'), play: $('#play'), step: $('#step'),
-      restart: $('#restart'), seed: $('#seed-checkbox'),
+      pause: $('#pause'), play: $('#play'), step: $('#step'), restart: $('#restart'), 
       speed: { input: $('#speed-input'), output: $('#speed-output') },
       size: { input: $('#size-input'), output: $('#size-output') },
+      seed: $('#seed-checkbox'),
     };
     restartRequired = false;
-    population      = generation = 0;
-    let size        = getCurrentSize();
-    numRows         = Math.floor(height / size);
-    numColumns      = Math.floor(width / size);
-    grid            = createGrid();
+    population = generation = 0;
+    let size = getCurrentSize();
+    numRows = Math.floor(height / size);
+    numColumns = Math.floor(width / size);
+    grid = createGrid();
     playGol()
     if (starting || seed) seedGrid();
     if (starting) setupControls();
@@ -49,11 +49,11 @@
   }
 
   function run() {
-    update();
-    draw();
+    updateGrid();
+    drawGrid();
   }
 
-  function draw() {
+  function drawGrid() {
     context.clearRect(0, 0, width, height);
     let currentPopulation = 0;
     for (let r = 0; r < numRows; r++) {
@@ -73,13 +73,13 @@
     context[func](c * size, r * size, size, size);
   }
 
-  function update() {
+  function updateGrid() {
     let updatedGrid = createGrid();
     for (let r = 0; r < numRows; r++) {
       for (let c = 0; c < numColumns; c++) {
         switch (getCurrentNeighbourCount(r, c)) {
-          case 2:  updatedGrid[r][c] = grid[r][c]; break;
-          case 3:  updatedGrid[r][c] = 1;          break;
+          case 2: updatedGrid[r][c] = grid[r][c]; break;
+          case 3: updatedGrid[r][c] = 1; break;
           default: updatedGrid[r][c] = 0;
         }
       }
@@ -88,7 +88,7 @@
   }
 
   function getCurrentNeighbourCount(r, c) {
-    let count  = 0;
+    let count = 0;
     let minRow = Math.max(0, r - 1);
     let minCol = Math.max(0, c - 1);
     let maxRow = Math.min(Math.max(r, numRows - 1), r + 1);
@@ -127,11 +127,11 @@
     controls.step.on('click', run);
 
     controls.restart.on('click', () => {
-      let wasPaused   = !gameRunning;
+      let wasPaused = !gameRunning;
       restartRequired = false;
       pauseGol();
       init(false, controls.seed[0].checked);
-      draw();
+      drawGrid();
       resetControls();
       if (wasPaused) {
         pauseGol();
