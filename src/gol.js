@@ -6,7 +6,7 @@
   let grid, numRows, numColumns;
   let controls, gameRunning, restartRequired, population, generation;
 
-  document.addEventListener('DOMContentLoaded', init, false);
+  $(document).on('DOMContentLoaded', init);
 
   function init(starting, seed) {
     canvas   = $('canvas')[0];
@@ -21,25 +21,25 @@
     };
     restartRequired = false;
     population      = generation = 0;
+    let size        = getCurrentSize();
+    numRows         = Math.floor(height / size);
+    numColumns      = Math.floor(width / size);
     grid            = createGrid();
-    numRows         = grid.length;
-    numColumns      = grid[0].length;
     playGol()
     if (starting || seed) seedGrid();
     if (starting) setupControls();
   }
 
   function createGrid() {
-    let size = getCurrentSize();
-    return Array.from({ length: Math.floor(height / size) }, () => {
-      return new Array(Math.floor(width / size)).fill(0);
+    return Array.from({ length: numRows }, () => {
+      return new Array(numColumns).fill(0);
     });
   }
 
   function seedGrid() {
     for (let _ = 0; _ < numRows; _++) {
-      let r = getRandomNumber(1, (numColumns - 2));
-      let c = getRandomNumber(1, (numRows - 2));
+      let r = getRandomNumber(1, numRows - 2);
+      let c = getRandomNumber(1, numColumns - 2);
       grid[r][c] = 1;
       for (let __ = 0; __ < getRandomNumber(0, 8); __++) {
         grid[r][c + getRandomNumber(-1, 1)] = 1;
@@ -89,10 +89,10 @@
 
   function getCurrentNeighbourCount(r, c) {
     let count  = 0;
-    let minRow = (r === 0)              ? 0 : r - 1;
-    let minCol = (c === 0)              ? 0 : c - 1;
-    let maxRow = (r === numRows - 1)    ? r : r + 1;
-    let maxCol = (c === numColumns - 1) ? c : c + 1;
+    let minRow = Math.max(0, r - 1);
+    let minCol = Math.max(0, c - 1);
+    let maxRow = Math.min(Math.max(r, numRows - 1), r + 1);
+    let maxCol = Math.min(Math.max(c, numColumns - 1), c + 1);
 
     for (let checkRow = minRow; checkRow >= minRow && checkRow <= maxRow; checkRow++) {
       for (let checkCol = minCol; checkCol >= minCol && checkCol <= maxCol; checkCol++) {
