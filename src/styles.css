@@ -10,11 +10,16 @@ canvas {
   border: 1px solid black;
   cursor: crosshair;
   display: inline;
+  image-rendering: pixelated;
 }
 
 #canvas-section {
   text-align: center;
   width: 100%;
+}
+
+#config-section label {
+  display: block;
 }
 
 #config-section label:has(input[type='range']) {

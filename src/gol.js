@@ -1,6 +1,6 @@
 (function () {
 
-  const CELL_SIZES = [4, 5, 7, 10, 14];
+  const CELL_SIZES = [5, 7, 10, 14];
   const SPEED_VALUES = [50, 100, 200, 500, 1000, 2000, 5000];
   let canvas, context, width, height;
   let grid, numRows, numColumns;
@@ -11,6 +11,8 @@
   function init(starting, seed) {
     canvas = $('canvas')[0];
     context = canvas.getContext('2d');
+    context.lineWidth = 1;
+    context.strokeStyle = 'grey';
     width = canvas.width;
     height = canvas.height;
     controls = {
@@ -18,6 +20,7 @@
       speed: { input: $('#speed-input'), output: $('#speed-output') },
       size: { input: $('#size-input'), output: $('#size-output') },
       seed: $('#seed-checkbox'),
+      grid: $('#grid-checkbox')
     }
     restartRequired = false;
     population = generation = 0;
@@ -53,7 +56,7 @@
     drawGrid();
   }
 
-  function drawGrid() {
+  function drawGrid(userInput) {
     context.clearRect(0, 0, width, height);
     let currentPopulation = 0;
     for (let r = 0; r < numRows; r++) {
@@ -61,16 +64,22 @@
         if (grid[r][c]) {
           currentPopulation++;
           drawCell('fillRect', r, c);
+        } else {
+          drawCell('clearRect', r, c);
         }
       }
     }
     population = currentPopulation;
-    updateInfoTexts();
+    updateInfoTexts(userInput);
   }
 
   function drawCell(func, r, c) {
     let size = getCurrentSize();
-    context[func](c * size, r * size, size, size);
+    let gridOffset = controls.grid[0].checked ? 1 : 0;
+    context[func](c * size + gridOffset, r * size + gridOffset, size - gridOffset, size - gridOffset);
+    if (gridOffset) {
+      context.strokeRect(c * size, r * size, size, size);
+    }
   }
 
   function updateGrid() {
@@ -151,6 +160,8 @@
       restartRequired = true;
     });
 
+    controls.grid.on('click', drawGrid);
+
     $(canvas).on('mousedown', (event) => {
       if (restartRequired) return;
       let size = getCurrentSize();
@@ -171,14 +182,14 @@
     Object.values(controls)
       .map(elm => elm = !elm.attr ? $(elm.input) : elm)
       .forEach(elm => {
-        let disabled = (![controls.pause, controls.restart, controls.seed].includes(elm));
+        let disabled = (![controls.pause, controls.restart, controls.seed, controls.grid].includes(elm));
         elm.attr('disabled', disabled);
       });
   }
 
   function toggleControls() {
     Object.values(controls)
-      .filter(elm => ![controls.restart, controls.seed].includes(elm))
+      .filter(elm => ![controls.restart, controls.seed, controls.grid].includes(elm))
       .map(elm => elm = (!elm.attr) ? $(elm.input) : elm)
       .forEach(elm => {
         elm.attr('disabled', !elm.attr('disabled'));
