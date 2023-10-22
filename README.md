@@ -8,8 +8,6 @@ Feel free to copy/fork/contribute.
 ## How to Run
 
 Any modern browser should support running this natively by opening `src/index.html`.
-<br>
-The `package(-lock).json` files are not required for running this project; I needed them to get my linter working in VS Code.
 
 ## Example Patterns
 
