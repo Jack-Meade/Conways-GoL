@@ -91,8 +91,8 @@
     let count = 0;
     let minRow = Math.max(0, r - 1);
     let minCol = Math.max(0, c - 1);
-    let maxRow = Math.min(Math.max(r, numRows - 1), r + 1);
-    let maxCol = Math.min(Math.max(c, numColumns - 1), c + 1);
+    let maxRow = Math.min(numRows - 1, r + 1);
+    let maxCol = Math.min(numColumns - 1, c + 1);
 
     for (let checkRow = minRow; checkRow >= minRow && checkRow <= maxRow; checkRow++) {
       for (let checkCol = minCol; checkCol >= minCol && checkCol <= maxCol; checkCol++) {
