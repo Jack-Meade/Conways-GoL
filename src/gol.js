@@ -156,7 +156,7 @@
     controls.size.input.on('input', (event) => {
       controls.size.input.attr('value', event.target.value);
       controls.size.output.text(`(${getCurrentSize()} - restart required to continue)`);
-      [controls.play, controls.step].forEach(elm => elm.attr('disabled', true));
+      [controls.play, controls.step, controls.grid].forEach(elm => elm.attr('disabled', true));
       restartRequired = true;
     });
 
