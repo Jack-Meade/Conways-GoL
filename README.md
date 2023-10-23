@@ -33,4 +33,11 @@ Any modern browser should support running this natively by opening `src/index.ht
     <td><img src="readme_images/pentadecathlon_3.png" /></td>
     <td>15</td>
   </tr>
+  <tr>
+    <td>Bloom</td>
+    <td><img src="readme_images/bloom_1.png" /></td>
+    <td><img src="readme_images/bloom_2.png" /></td>
+    <td><img src="readme_images/bloom_3.png" /></td>
+    <td>16</td>
+  </tr>
 </table>
